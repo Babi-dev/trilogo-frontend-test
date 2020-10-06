@@ -1,0 +1,57 @@
+.main {
+  position: relative;
+  flex: 1;
+  min-width: 1024px;
+}
+
+.container {
+  position: absolute;
+  width: 100%;
+  height: calc(100vh - 80px);
+  padding: 30px;
+  top: 80px;
+  left: 0px;
+}
+
+.button_modal {
+  padding: 4px 10px;
+
+  font-family: 'Roboto', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 22px;
+
+  color: #FFFFFF;
+  background-color: #4C12A1;
+  border-radius: 20px;
+}
+
+
+.icon {
+  margin-right: 10px;
+
+  font-size: 12px;
+  color: #fff;
+}
+
+.button_modal:hover {
+  opacity: 0.8;
+}
+
+.title_inputs {
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-size: 12px;
+  line-height: 22px;
+
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.description_upload {
+  font-size: 12px;
+  line-height: 22px;
+  text-align: center;
+
+  color: rgba(0, 0, 0, 0.43);
+}
