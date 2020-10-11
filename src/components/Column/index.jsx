@@ -2,7 +2,7 @@ import React from 'react';
 
 import styles from './Column.module.css';
 
-function Column({ title, colorHeader }) {
+function Column({ title, colorHeader, children }) {
   return (
     <div className={styles.container}>
       <header
@@ -11,9 +11,7 @@ function Column({ title, colorHeader }) {
       >
         <span className={styles.title}>{title}</span>
       </header>
-      <section className={styles.content}>
-        <span>Content</span>
-      </section>
+      <section className={styles.content}>{children}</section>
     </div>
   );
 }

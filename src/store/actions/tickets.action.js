@@ -1,0 +1,9 @@
+// Type
+export const TicketsActionTypes = {
+  ASYNC_TICKET: '@tickets/ASYNC_TICKET',
+  ASYNC_TICKETS_LIST: '@tickets/ASYNC_TICKETS_LIST',
+  ASYNC_TICKET_DELETE: '@tickets/ASYNC_TICKET_DELETE',
+  ASYNC_TICKET_MOVE: '@tickets/ASYNC_TICKET_MOVE',
+  ASYNC_TICKET_EDIT: '@tickets/ASYNC_TICKET_EDIT',
+  CHANGE_TICKETS: '@tickets/CHANGE_TICKETS',
+};

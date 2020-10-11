@@ -1,15 +1,44 @@
-import React, { useState, useCallback } from 'react';
-import { Modal, Input, Select, Upload, message, Row, Col } from 'antd';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Modal, Input, Select, Upload, Row, Col } from 'antd';
 import { LoadingOutlined, InboxOutlined } from '@ant-design/icons';
+
+import { postTicket, getTickets } from 'store/reducers/tickets.reducer';
 
 import Header from 'components/Header';//eslint-disable-line
 import Column from 'components/Column';//eslint-disable-line
+import Card from 'components/Card';//eslint-disable-line
 
 import styles from './Home.module.css';
 
 function Home() {
+  const dispatch = useDispatch();
+  const { Dragger } = Upload;
+  const { Option } = Select;
+
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [description, setDescription] = useState('');
+  const [type, setType] = useState('');
+  const [responsible, setResponsible] = useState('');
+  const [image, setImage] = useState(null);
+
+  const { tickets } = useSelector(({ Tickets }) => Tickets);
+
+  useEffect(() => {
+    dispatch(getTickets());
+  }, [dispatch]);
+
+  const handleSubmitForm = useCallback(() => {
+    const params = {
+      description,
+      type,
+      responsible,
+      image: image ? image[0] : null,
+    };
+    dispatch(postTicket(params));
+  }, [description, type, responsible, image, dispatch]);
 
   const showModal = useCallback(() => {
     setVisible(true);
@@ -17,35 +46,38 @@ function Home() {
 
   const handleOk = useCallback(() => {
     setLoading(true);
+    handleSubmitForm();
 
     setTimeout(() => {
       setVisible(false);
       setLoading(false);
     }, 3000);
-  }, []);
+  }, [handleSubmitForm]);
 
   const handleCancel = useCallback(() => {
     setVisible(false);
   }, []);
 
-  const { Dragger } = Upload;
-
   const props = {
     name: 'file',
-    multiple: true,
-    action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+    multiple: false,
+    action: false,
     onChange(info) {
-      const { status } = info.file;
-      if (status !== 'uploading') {
-        console.log(info.file, info.fileList);
-      }
-      if (status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
+      const urlImg = getBase64(info.file.originFileObj);
+      setImage(urlImg);
     },
   };
+
+  const getBase64 = useCallback(file => {
+    const reader = new FileReader();
+    const urlImg = [];
+
+    reader.onloadend = () => urlImg.push(reader.result);
+
+    if (file) reader.readAsDataURL(file);
+
+    return urlImg;
+  }, []);
 
   return (
     <main className={styles.main}>
@@ -53,16 +85,52 @@ function Home() {
       <section className={styles.container}>
         <Row>
           <Col span={6}>
-            <Column title="Abertos" colorHeader="#FCC8CB" />
+            <Column title="Abertos" colorHeader="#FCC8CB">
+              {tickets &&
+                tickets.map(ticket => {
+                  return (
+                    ticket.status === 'open' && (
+                      <Card key={ticket.id} data={ticket} />
+                    )
+                  );
+                })}
+            </Column>
           </Col>
           <Col span={6}>
-            <Column title="Executados" colorHeader="#F8D8C7" />
+            <Column title="Executados" colorHeader="#F8D8C7">
+              {tickets &&
+                tickets.map(ticket => {
+                  return (
+                    ticket.status === 'executed' && (
+                      <Card key={ticket.id} data={ticket} />
+                    )
+                  );
+                })}
+            </Column>
           </Col>
           <Col span={6}>
-            <Column title="Vistoriados" colorHeader="#D4F0C6" />
+            <Column title="Vistoriados" colorHeader="#D4F0C6">
+              {tickets &&
+                tickets.map(ticket => {
+                  return (
+                    ticket.status === 'inspected' && (
+                      <Card key={ticket.id} data={ticket} />
+                    )
+                  );
+                })}
+            </Column>
           </Col>
           <Col span={6}>
-            <Column title="Arquivados" colorHeader="#EFEDED" />
+            <Column title="Arquivados" colorHeader="#EFEDED">
+              {tickets &&
+                tickets.map(ticket => {
+                  return (
+                    ticket.status === 'filed' && (
+                      <Card key={ticket.id} data={ticket} />
+                    )
+                  );
+                })}
+            </Column>
           </Col>
         </Row>
       </section>
@@ -88,17 +156,35 @@ function Home() {
           Descrição
           <small style={{ color: 'red' }}>*</small>
         </p>
-        <Input placeholder="Input" />
+        <Input
+          placeholder="Input"
+          onChange={({ target }) => setDescription(target.value)}
+        />
         <p className={styles.title_inputs}>
           Tipo
           <small style={{ color: 'red' }}>*</small>
         </p>
-        <Select placeholder="Menu" style={{ width: '100%' }} />
+        <Select
+          placeholder="Menu"
+          style={{ width: '100%' }}
+          onChange={value => setType(value)}
+        >
+          <Option value="Bem">Bem</Option>
+          <Option value="Procedimento">Procedimento</Option>
+          <Option value="Predial">Predial</Option>
+        </Select>
         <p className={styles.title_inputs}>
           Responsável
           <small style={{ color: 'red' }}>*</small>
         </p>
-        <Select placeholder="Menu" style={{ width: '100%' }} />
+        <Select
+          placeholder="Menu"
+          style={{ width: '100%' }}
+          onChange={value => setResponsible(value)}
+        >
+          <Option value="Yudi Tamashiro">Yudi Tamashiro</Option>
+          <Option value="Priscilla Alcantara">Priscilla Alcantara</Option>
+        </Select>
         <p className={styles.title_inputs}>Imagem</p>
         <Dragger {...props}>
           <p className="ant-upload-drag-icon">

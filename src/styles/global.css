@@ -15,3 +15,15 @@ button {
   border: none;
   background: none;
 }
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #F5F5F5;
+  border-radius: 16px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #D2CFDF;
+  border-radius: 16px;
+}
