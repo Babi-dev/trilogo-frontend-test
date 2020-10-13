@@ -85,48 +85,68 @@ function Home() {
       <section className={styles.container}>
         <Row>
           <Col span={6}>
-            <Column title="Abertos" colorHeader="#FCC8CB">
+            <Column id="open" title="Abertos" colorHeader="#FCC8CB">
               {tickets &&
                 tickets.map(ticket => {
                   return (
                     ticket.status === 'open' && (
-                      <Card key={ticket.id} data={ticket} />
+                      <Card
+                        key={ticket.id}
+                        id={ticket.id}
+                        data={ticket}
+                        draggable="true"
+                      />
                     )
                   );
                 })}
             </Column>
           </Col>
           <Col span={6}>
-            <Column title="Executados" colorHeader="#F8D8C7">
+            <Column id="executed" title="Executados" colorHeader="#F8D8C7">
               {tickets &&
                 tickets.map(ticket => {
                   return (
                     ticket.status === 'executed' && (
-                      <Card key={ticket.id} data={ticket} />
+                      <Card
+                        key={ticket.id}
+                        id={ticket.id}
+                        data={ticket}
+                        draggable="true"
+                      />
                     )
                   );
                 })}
             </Column>
           </Col>
           <Col span={6}>
-            <Column title="Vistoriados" colorHeader="#D4F0C6">
+            <Column id="inspected" title="Vistoriados" colorHeader="#D4F0C6">
               {tickets &&
                 tickets.map(ticket => {
                   return (
                     ticket.status === 'inspected' && (
-                      <Card key={ticket.id} data={ticket} />
+                      <Card
+                        key={ticket.id}
+                        id={ticket.id}
+                        data={ticket}
+                        draggable="true"
+                      />
                     )
                   );
                 })}
             </Column>
           </Col>
           <Col span={6}>
-            <Column title="Arquivados" colorHeader="#EFEDED">
+            <Column id="filed" title="Arquivados" colorHeader="#EFEDED">
               {tickets &&
                 tickets.map(ticket => {
                   return (
                     ticket.status === 'filed' && (
-                      <Card key={ticket.id} data={ticket} />
+                      <Card
+                        key={ticket.id}
+                        id={ticket.id}
+                        data={ticket}
+                        draggable="true"
+                      />
                     )
                   );
                 })}

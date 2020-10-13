@@ -51,7 +51,9 @@ function* moveTicket({ payload }) {
     const response = yield localStorage.getItem('@Trilogo:tickets');
     const tickets = JSON.parse(response);
     const filter = tickets.filter(ticket => ticket.id !== payload.id);
-    const newTickets = [...filter, payload];
+    const filterTicket = tickets.filter(ticket => ticket.id === payload.id);
+    const newStatusTicket = { ...filterTicket[0], status: payload.status };
+    const newTickets = [...filter, newStatusTicket];
 
     yield localStorage.setItem('@Trilogo:tickets', JSON.stringify(newTickets));
 

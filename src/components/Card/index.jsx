@@ -2,23 +2,18 @@ import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Menu, Dropdown, Modal, Select, Input } from 'antd';
 
-import {
-  deleteTicket,
-  putTicketMove,
-  putTicket,
-} from 'store/reducers/tickets.reducer';
-import { newStatusMove } from 'utils/functions';
+import { deleteTicket, putTicket } from 'store/reducers/tickets.reducer';
 
 import optionImg from 'assets/options.svg';
 
+import { newStatusMove } from 'utils/functions';
 import styles from './Card.module.css';
 
-function Card({ data }) {
+function Card({ data, draggable }) {
   const dispatch = useDispatch();
   const { Option } = Select;
 
   const [visibleModalDelete, setVisibleModalDelete] = useState(false);
-  const [visibleModalMove, setVisibleModalMove] = useState(false);
   const [visibleModalEdit, setVisibleModalEdit] = useState(false);
 
   const [description, setDescription] = useState(data.description);
@@ -37,22 +32,6 @@ function Card({ data }) {
     dispatch(deleteTicket(data.id));
     handleModalDelite();
   }, [dispatch, handleModalDelite, data]);
-
-  const handleModalMove = useCallback(() => {
-    if (visibleModalMove) {
-      setVisibleModalMove(false);
-    } else {
-      setVisibleModalMove(true);
-    }
-  }, [visibleModalMove]);
-
-  const handleMove = useCallback(() => {
-    const status = newStatusMove(data.status);
-    const params = { ...data, status };
-
-    dispatch(putTicketMove(params));
-    handleModalMove();
-  }, [data, handleModalMove, dispatch]);
 
   const handleModalEdit = useCallback(() => {
     if (visibleModalEdit) {
@@ -74,6 +53,21 @@ function Card({ data }) {
     handleModalEdit();
   }, [handleModalEdit, description, type, responsible, data, dispatch]);
 
+  const dragStart = useCallback(
+    event => {
+      const { target } = event;
+      const status = newStatusMove(data.status);
+
+      event.dataTransfer.setData('card_id', target.id);
+      event.dataTransfer.setData('status', status);
+    },
+    [data],
+  );
+
+  const dragOver = useCallback(event => {
+    event.stopPropagation();
+  }, []);
+
   const menu = (
     <Menu style={{ borderRadius: '8px', width: '130px' }}>
       <Menu.Item>
@@ -81,13 +75,6 @@ function Card({ data }) {
           Editar
         </button>
       </Menu.Item>
-      {data.status !== 'filed' && (
-        <Menu.Item>
-          <button type="button" onClick={handleModalMove}>
-            Mover
-          </button>
-        </Menu.Item>
-      )}
       <Menu.Item>
         <button type="button" onClick={handleModalDelite}>
           Excluir
@@ -98,7 +85,13 @@ function Card({ data }) {
 
   return (
     <>
-      <div className={styles.container_card}>
+      <div
+        id={data.id}
+        className={styles.container_card}
+        draggable={draggable}
+        onDragStart={dragStart}
+        onDragOver={dragOver}
+      >
         <img src={data.image} alt="" />
 
         <div className={styles.badge}>
@@ -144,40 +137,6 @@ function Card({ data }) {
         <span>
           Você tem certeza que deseja deletar o ticket
           <span style={{ color: '#4C12A1' }}>{` ${data.id} `}</span>?
-        </span>
-      </Modal>
-
-      <Modal
-        visible={visibleModalMove}
-        title="Alterar status"
-        onCancel={handleModalMove}
-        footer={[
-          <button
-            key="button"
-            className={styles.button_modal_cancel}
-            type="button"
-            onClick={handleModalMove}
-          >
-            Cancelar
-          </button>,
-          <button
-            key="submit"
-            type="submit"
-            className={styles.button_modal}
-            onClick={handleMove}
-          >
-            Mover
-          </button>,
-        ]}
-      >
-        <span>
-          Você tem certeza que deseja mover o ticket
-          <span style={{ color: '#4C12A1' }}>{` ${data.id} `}</span>
-          para a coluna de
-          <span style={{ color: '#D4662D' }}>
-            {''.concat(' ', newStatusMove(data.status))}
-          </span>
-          ?
         </span>
       </Modal>
 
